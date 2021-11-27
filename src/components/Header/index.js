@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
+
 import logo from '../../assets/whg.jpg';
 
 const Headers = styled.header`
@@ -90,8 +92,76 @@ const Button = styled.button`
     }
   }
 `;
+const HamburgerBtn = styled.button`
+  display: none;
+  @media only Screen and (max-width: 48em) {
+    display: inline-block;
+  }
+  position: relative;
+  background-color: transparent;
+  width: 2rem;
+  height: 2px;
+  margin-top: 0rem;
+  transition: all 0.3s;
+  cursor: pointer;
+  &::before,
+  &::after {
+    content: "";
+    background-color: var(--white);
+    width: 2rem;
+    height: 2px;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  &::before {
+    top: ${(props) => (props.clicked ? "0" : "-0.5rem")};
+    transform: ${(props) => (props.clicked ? "rotate(135deg)" : "rotate(0)")};
+  }
+  &::after {
+    top: ${(props) => (props.clicked ? "0" : "0.5rem")};
+    transform: ${(props) => (props.clicked ? "rotate(-135deg)" : "rotate(0)")};
+  }
+`;
+
+const MobileMenu = styled.nav`
+  display: none;
+  @media only Screen and (max-width: 48em) {
+    display: flex;
+  }
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  overflow-x: hidden;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  opacity: ${(props) => (props.clicked ? "1" : 0)};
+  visibility: ${(props) => (props.clicked ? "visible" : "hidden")};
+  transition: all 0.5s;
+  z-index: -10;
+  background-color: rgb(53 53 63 / 95%);
+  border-radius: 20px;
+  margin: 0.5rem;
+  a {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin: 1.5rem;
+    cursor: pointer;
+  }
+`;
+
 
 const Header = () => {
+
+  const [click, setClick]  = useState(false);
+  const handleClick = () => setClick(!click);
+
   return (
   <Headers>
   <Logo>
@@ -102,10 +172,21 @@ const Header = () => {
     <a href="#home">Home</a>
     <a href="#about">About Us</a>
     <a href="#services">Services</a>
-    <a href="#contact">
+    <a href="#contact" onClick={()=>{}}>
       <Button>Contact Us</Button>
     </a>
   </Nav>
+  <HamburgerBtn onClick ={() => handleClick()} clicked= {click}>
+    <span/>
+  </HamburgerBtn>
+  <MobileMenu clicked ={click}>
+  <a href="#home" onClick ={() => handleClick()} >Home</a>
+    <a href="#about" onClick ={() => handleClick()}>About Us</a>
+    <a href="#services" onClick ={() => handleClick()}>Services</a>
+    <a href="#contact" onClick ={() => handleClick()}>
+      <Button>Contact Us</Button>
+    </a>
+  </MobileMenu>
   </Headers>
   );
 };
