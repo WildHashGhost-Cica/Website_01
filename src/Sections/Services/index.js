@@ -1,16 +1,21 @@
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
-import TextBlock from "../../components/TextBlock";
-import SvgBlock from "../../components/SvgBlock";
+
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Tube from "../../assets/3dtube.png";
 import Cone from "../../assets/3dtriangle.png";
 import Capsule from "../../assets/3dcapsule.png";
+
+import TextBlock from "../../components/TextBlock";
+import SvgBlock from "../../components/SvgBlock";
 
 // const TextBlock = lazy(() => import("../../components/TextBlock"));
 // const SvgBlock = lazy(() => import("../../components/SvgBlock"));
 
 const ServiceSection = styled.section`
   width: 100vw;
-  /*background-color: #0a0b10; */
+  /* background-color: #0a0b10; */
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
@@ -109,19 +114,216 @@ const OBJ = styled.div`
   }
 `;
 
-
- 
-
 const Services = () => {
+  const ref = useRef(null);
+  gsap.registerPlugin(ScrollTrigger);
+  const revealRefs = useRef([]);
+  revealRefs.current = [];
+
+  useEffect(() => {
+    const element = ref.current;
+    ////
+    const mq = window.matchMedia("(max-width: 48em)");
+    const t1 = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.getElementById("services"),
+
+        start: "top top+=180",
+
+        end: "bottom bottom",
+
+        pin: element,
+        pinReparent: true,
+      },
+    });
+    t1.fromTo(
+      document.getElementById("line"),
+
+      {
+        height: "15rem",
+      },
+      {
+        height: "3rem",
+        duration: 2,
+        scrollTrigger: {
+          trigger: document.getElementById("line"),
+          start: "top top+=200",
+          end: "bottom top+=220",
+          scrub: true,
+        },
+      }
+    );
+
+    revealRefs.current.forEach((el, index) => {
+      // console.log(el.childNodes);
+      if (mq.matches) {
+        t1.from(
+          el.childNodes[0],
+
+          {
+            x: -300,
+            opacity: 0,
+            duration: 2,
+
+            ease: "power2",
+            scrollTrigger: {
+              id: `section-${index + 1}`,
+              trigger: el,
+              start: "top center+=200",
+              end: "bottom bottom-=100",
+              scrub: true,
+              snap: true,
+              //
+              // toggleActions: "play none none reverse",
+            },
+          }
+        )
+          .to(el.childNodes[1], {
+            transform: "scale(0)",
+
+            ease: "power2.inOut",
+
+            scrollTrigger: {
+              id: `section-${index + 1}`,
+              trigger: el.childNodes[1],
+              start: "top center",
+              end: "bottom center",
+              scrub: true,
+              snap: true,
+
+              // toggleActions: "play none none reverse",
+            },
+          })
+          .from(
+            el.childNodes[2],
+
+            {
+              y: 400,
+
+              duration: 2,
+
+              ease: "power2",
+              scrollTrigger: {
+                id: `section-${index + 1}`,
+                trigger: el,
+                start: "top center+=100",
+                end: "bottom bottom-=200",
+                scrub: true,
+                snap: true,
+                //
+                // toggleActions: "play none none reverse",
+              },
+            }
+          )
+          .to(
+            el,
+
+            {
+              opacity: 0,
+
+              ease: "power2",
+              scrollTrigger: {
+                id: `section-${index + 1}`,
+                trigger: el,
+                start: "top top+=300",
+                end: "center top+=300",
+                scrub: true,
+              },
+            }
+          );
+      } else {
+        t1.from(
+          el.childNodes[0],
+
+          {
+            x: -300,
+            opacity: 0,
+            duration: 2,
+
+            ease: "power2",
+            scrollTrigger: {
+              id: `section-${index + 1}`,
+              trigger: el,
+              start: "top center+=100",
+              end: "bottom bottom-=200",
+              scrub: true,
+              snap: true,
+              //
+              // toggleActions: "play none none reverse",
+            },
+          }
+        )
+          .to(el.childNodes[1], {
+            transform: "scale(0)",
+
+            ease: "power2.inOut",
+
+            scrollTrigger: {
+              id: `section-${index + 1}`,
+              trigger: el.childNodes[1],
+              start: "top center",
+              end: "bottom center",
+              scrub: true,
+              snap: true,
+
+              // toggleActions: "play none none reverse",
+            },
+          })
+          .from(
+            el.childNodes[2],
+
+            {
+              y: 400,
+
+              duration: 2,
+
+              ease: "power2",
+              scrollTrigger: {
+                id: `section-${index + 1}`,
+                trigger: el,
+                start: "top center+=100",
+                end: "bottom bottom-=200",
+                scrub: true,
+                snap: true,
+                //
+                // toggleActions: "play none none reverse",
+              },
+            }
+          )
+          .to(
+            el,
+
+            {
+              opacity: 0,
+
+              ease: "power2",
+              scrollTrigger: {
+                id: `section-${index + 1}`,
+                trigger: el,
+                start: "top top+=200",
+                end: "center top+=300",
+                scrub: true,
+              },
+            }
+          );
+      }
+    });
+  }, []);
+
+  const addToRefs = (el) => {
+    if (el && !revealRefs.current.includes(el)) {
+      revealRefs.current.push(el);
+    }
+  };
   return (
     <ServiceSection id="services">
-      <Background >
+      <Background ref={ref}>
         <Title className="title">What We Do</Title>
         <Line id="line" />
         <Triangle id="triangle" />
       </Background>
 
-      <Content >
+      <Content ref={addToRefs}>
         <TextBlock
           topic="Design"
           title={<h1>We build award winning Designs</h1>}
@@ -136,7 +338,7 @@ const Services = () => {
         </OBJ>
         <SvgBlock svg="Design.svg" />
       </Content>
-      <Content >
+      <Content ref={addToRefs}>
         <TextBlock
           topic="Develop"
           title={<h1>We Develope high quality Web & App</h1>}
