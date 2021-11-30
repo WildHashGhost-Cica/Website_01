@@ -118,7 +118,7 @@ const AboutText = styled.div`
 
 const About = () => {
   return (
-  <AboutSection>
+  <AboutSection id="about">
     <Waves src={wave} alt="waves" width="400" height="400"/>
     <Hand>
         <img src={hand} alt="hand" width="400" height="400" />

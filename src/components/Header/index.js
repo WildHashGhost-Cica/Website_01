@@ -1,7 +1,8 @@
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef, useState } from "react";
-import styled from 'styled-components';
-
-import logo from '../../assets/whg.jpg';
+import styled from "styled-components";
+import logo from "../../assets/whg.jpg";
 
 const Headers = styled.header`
   display: flex;
@@ -23,7 +24,7 @@ const Headers = styled.header`
 const Logo = styled.a`
   display: flex;
   align-items: center;
-  width: 3rem;
+  width: 2rem;
   height: auto;
   cursor: pointer;
   img {
@@ -155,39 +156,118 @@ const MobileMenu = styled.nav`
     cursor: pointer;
   }
 `;
-
-
 const Header = () => {
+  const [click, setClick] = useState(false);
+  //const handleClick = () => setClick(!click);
+  const ref = useRef(null);
 
-  const [click, setClick]  = useState(false);
-  const handleClick = () => setClick(!click);
+  gsap.registerPlugin(ScrollTrigger);
+
+  const scrollUp = (id, e) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "nearest",
+    });
+  };
+
+  const handleClick = (id, e) => {
+    setClick(!click);
+    scrollUp(id, e);
+  };
+
+  useEffect(() => {
+    const element = ref.current;
+
+    const mq = window.matchMedia("(max-width: 40em)");
+    // console.log("mq", mq);
+    if (mq.matches) {
+      gsap.to(element, {
+        position: "fixed",
+        top: "0",
+        left: "0",
+        right: "0",
+        padding: "1rem 2.5rem",
+
+        borderRadius: "0 0 50px 50px",
+
+        border: "2px solid var(--white)",
+
+        duration: 1,
+        ease: "power1.out",
+
+        scrollTrigger: {
+          trigger: element,
+          start: "bottom+=200 top",
+          end: "+=100",
+          scrub: true,
+        },
+      });
+    } else {
+      gsap.to(element, {
+        position: "fixed",
+        top: "1rem",
+        left: "3rem",
+        right: "3rem",
+        padding: "1.5rem 2rem",
+
+        borderRadius: "50px",
+
+        border: "3px solid var(--white)",
+
+        duration: 1,
+        ease: "power1.out",
+
+        scrollTrigger: {
+          trigger: element,
+          start: "bottom+=300 top",
+          end: "+=250",
+          scrub: true,
+        },
+      });
+    }
+  }, []);
 
   return (
-  <Headers>
-  <Logo>
-    <img src={logo} alt="WHG"/>
-    <h3>WildHahsGhost</h3>
-  </Logo>
-  <Nav>
-    <a href="#home">Home</a>
-    <a href="#about">About Us</a>
-    <a href="#services">Services</a>
-    <a href="#contact" onClick={()=>{}}>
-      <Button>Contact Us</Button>
-    </a>
-  </Nav>
-  <HamburgerBtn onClick ={() => handleClick()} clicked= {click}>
-    <span/>
-  </HamburgerBtn>
-  <MobileMenu clicked ={click}>
-  <a href="#home" onClick ={() => handleClick()} >Home</a>
-    <a href="#about" onClick ={() => handleClick()}>About Us</a>
-    <a href="#services" onClick ={() => handleClick()}>Services</a>
-    <a href="#contact" onClick ={() => handleClick()}>
-      <Button>Contact Us</Button>
-    </a>
-  </MobileMenu>
-  </Headers>
+    <Headers ref={ref}>
+      <Logo>
+        <img src={logo} alt="WHG" />
+        <h3>WildHashGhost</h3>
+      </Logo>
+      <Nav>
+        <a href="#home" onClick={(e) => scrollUp("home",e)}>
+          Home
+        </a>
+        <a href="#about" onClick={(e) => scrollUp("about", e)}>
+          About Us
+        </a>
+        <a href="#services" onClick={(e) => scrollUp("services", e)}>
+          Services
+        </a>
+        <a href="#contact" onClick={(e) => scrollUp("contact", e)}>
+          <Button>Contact Us</Button>
+        </a>
+      </Nav>
+      <HamburgerBtn clicked={click} onClick={() => setClick(!click)}>
+        <span></span>
+      </HamburgerBtn>
+      <MobileMenu clicked={click}>
+        <a href="#home" onClick={(e) => handleClick("home", e)}>
+          Home
+        </a>
+        <a href="#about" onClick={(e) => handleClick("about", e)}>
+          About Us
+        </a>
+        <a href="#services" onClick={(e) => handleClick("services", e)}>
+          Services
+        </a>
+        <a href="#contact" onClick={(e) => handleClick("contact", e)}>
+          <Button>Contact Us</Button>
+        </a>
+      </MobileMenu>
+    </Headers>
   );
 };
 
